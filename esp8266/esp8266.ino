@@ -6,7 +6,7 @@
 
 #define EEPROM_SIZE 64
 #define SERVO_PIN D4
-#define SERVER_URL "http://192.168.29.156:5000/get-servo" // Replace with Render backend URL
+#define SERVER_URL "http://192.168.29.156:5000/get-servo" // Replace with your backend URL
 
 ESP8266WebServer server(80);
 WiFiClient client;
@@ -20,7 +20,9 @@ String password = "";
 const char* AP_ssid = "NodeMCU_AP";
 const char* AP_password = "12345678"; 
 
-int lastAngle = -1;
+int lastAngle = -1; // Stores last servo position
+unsigned long lastRequestTime = 0;  // Track last request time
+const int requestInterval = 500;    // Request every 500ms
 
 // 📌 Serve HTML page to enter WiFi credentials
 void handleRoot() {
@@ -53,7 +55,7 @@ void handleConnect() {
   ESP.restart();
 }
 
-// 📌 Handle webpage to show connection details
+// 📌 Show connection details webpage
 void handleWebPage() {
   String html = "<html><body><h1>ESP8266 Connected</h1>";
   html += "<p>Connected to: " + ssid + "</p>";
@@ -107,48 +109,40 @@ void setup() {
   Serial.println("🌐 Web server started.");
 }
 
+// 📌 Fetch angle from server and move servo
+void fetchAndMoveServo() {
+  HTTPClient http;
+  http.begin(client, SERVER_URL);
+
+  int httpCode = http.GET();
+  if (httpCode > 0) {  // ✅ Ensure request was successful
+    if (httpCode == HTTP_CODE_OK) {
+      String response = http.getString();
+      response.replace("\"", ""); // Remove double quotes
+
+      int angle = response.toInt();
+      if (angle >= 0 && angle <= 180 && angle != lastAngle) { 
+        Serial.print("Moving servo to: ");
+        Serial.println(angle);
+        myServo.write(angle);  // ✅ Move servo
+        lastAngle = angle;
+      }
+    }
+  } else {
+    Serial.print("❌ HTTP Request Failed: ");
+    Serial.println(http.errorToString(httpCode).c_str());
+  }
+  
+  http.end();
+}
+
 void loop() {
   server.handleClient();
 
   if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin(client, SERVER_URL);
-
-    int httpCode = http.GET();
-    if (httpCode > 0) { // ✅ Ensure request was successful
-      Serial.print("HTTP Response Code: ");
-      Serial.println(httpCode);
-
-      if (httpCode == HTTP_CODE_OK) {
-        String response = http.getString();
-        Serial.print("Received angle: ");
-        Serial.println(response);
-
-        // Remove double quotes from the response
-        response.replace("\"", ""); // Remove all double quotes
-
-        int angle = response.toInt(); // Convert to integer
-        Serial.print("Parsed angle: ");
-        Serial.println(angle);
-
-        if (angle >= 0 && angle <= 180) { // ✅ Validate angle range
-          if (angle != lastAngle) {
-            Serial.print("Moving servo to: ");
-            Serial.println(angle);
-            myServo.write(angle);  // ✅ Move servo
-            lastAngle = angle;
-          }
-        } else {
-          Serial.println("⚠️ Invalid angle received");
-        }
-      }
-    } else {
-      Serial.print("❌ HTTP Request Failed: ");
-      Serial.println(http.errorToString(httpCode).c_str());
+    if (millis() - lastRequestTime >= requestInterval) {
+      lastRequestTime = millis();  // Update last request time
+      fetchAndMoveServo();
     }
-
-    http.end();
   }
-
-  delay(2000);
 }
