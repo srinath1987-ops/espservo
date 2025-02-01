@@ -1,0 +1,198 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  background: #1e1e1e; /* Dark retro background */
+  color: #e0e0e0; /* Light text for contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* App Container */
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Card Styling */
+.card {
+  background: #2b2b2b; /* Dark gray retro feel */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  border: 2px solid #ffcc00; /* Retro yellow border */
+  
+  /* Add animation */
+  animation: fadeInUp 1s ease-out, floating 3s infinite ease-in-out;
+}
+
+/* Fade-in & Slide-up Effect */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth Floating Animation */
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+
+/* Title */
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #ffcc00; /* Retro yellow */
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Gauge Styling */
+.gauge-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+}
+
+.gauge {
+  width: 100%;
+  height: 100%;
+  border: 8px solid #ffcc00; /* Retro yellow */
+  border-radius: 50%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  transform-origin: center;
+  transition: transform 0.5s ease;
+}
+
+.angle-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e0e0e0; /* Light gray text */
+  background: #2b2b2b;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Current Position Styling */
+.current-position {
+  margin-top: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffcc00; /* Retro yellow */
+  background: rgba(255, 204, 0, 0.2); /* Light yellow background */
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: inline-block;
+  border: 1px solid #ffcc00;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Slider */
+.slider {
+  width: 90%;
+  margin: 20px auto;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #ffcc00;
+  border-radius: 5px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Button */
+.move-button {
+  background: #ffcc00;
+  color: #2b2b2b;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.move-button:hover {
+  background: #e6b800;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .gauge-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .angle-display {
+    font-size: 1rem;
+  }
+
+  .slider {
+    width: 100%;
+  }
+
+  .current-position {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+}
